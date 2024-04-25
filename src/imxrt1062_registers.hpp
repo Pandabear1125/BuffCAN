@@ -56,18 +56,18 @@
 #define FLEXCAN1_CTRL2      (FLEXCAN1_BASE + 0x0034ul)
 // Error and Status 2 Register (Read Only)
 #define FLEXCAN1_ESR2       (FLEXCAN1_BASE + 0x0038ul)
-// CRC Register (+C offset)
-#define FLEXCAN1_CRC        (FLEXCAN1_BASE + 0x0044ul)
-// Receiving FIFO Global Mask Register
+// CRC Register (Read Only)
+#define FLEXCAN1_CRCR       (FLEXCAN1_BASE + 0x0044ul)
+// Receiving FIFO Global Mask Register (R/W)
 #define FLEXCAN1_RXFGMASK   (FLEXCAN1_BASE + 0x0048ul)
-// Receiving FIFO Information Register
+// Receiving FIFO Information Register (Read Only)
 #define FLEXCAN1_RXFIR      (FLEXCAN1_BASE + 0x004Cul)
-// Debug 1 Register (+C offset)
+// Debug 1 Register (Read Only)
 #define FLEXCAN1_DBG1       (FLEXCAN1_BASE + 0x0058ul)
-// Debug 2 Register
+// Debug 2 Register (Read Only)
 #define FLEXCAN1_DBG2       (FLEXCAN1_BASE + 0x005Cul)
 
-// Individual Message Buffers
+// Individual Message Buffers (R/W)
 #define FLEXCAN1_MBx(x)     (FLEXCAN1_MB_BASE + (x * 0x10ul))
 
 #define FLEXCAN1_MB0        (FLEXCAN1_MB_BASE + 0x0000ul)
@@ -135,7 +135,7 @@
 #define FLEXCAN1_MB62       (FLEXCAN1_MB_BASE + 0x03E0ul)
 #define FLEXCAN1_MB63       (FLEXCAN1_MB_BASE + 0x03F0ul)
 
-// Receiving Individual Mask Registers
+// Receiving Individual Mask Registers (R/W)
 #define FLEXCAN1_RXIMRx(x)  (FLEXCAN1_BASE + 0x0880ul + (x * 0x4ul))
 
 #define FLEXCAN1_RXIMR0     (FLEXCAN1_BASE + 0x0880ul)
@@ -203,11 +203,11 @@
 #define FLEXCAN1_RXIMR62    (FLEXCAN1_BASE + 0x0978ul)
 #define FLEXCAN1_RXIMR63    (FLEXCAN1_BASE + 0x097Cul)
 
-// Glitch Filter Width Register
+// Glitch Filter Width Register (R/W)
 #define FLEXCAN1_GFWR       (FLEXCAN1_BASE + 0x09E0ul)
 
 //// FlexCAN BUS 2
-// todo: BUS 2
+
 
 //// FlexCAN BUS 3
 // todo: BUS 3
