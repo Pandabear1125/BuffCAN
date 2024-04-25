@@ -1,283 +1,32 @@
-#ifndef BUFFCAN_REGISTERS_HPP
-#define BUFFCAN_REGISTERS_HPP
+#ifndef BUFFCAN_IMXRT1062_REGISTERS_HPP
+#define BUFFCAN_IMXRT1062_REGISTERS_HPP
 
+/// @file This file contains the register definitions and information for the i.MX RT1062 ARM Cortex-M7 microcontroller.
 
-// The base addresses for the different FlexCAN buses
+/**********\ BASE ADDRESSES /**********/
 #pragma region BASE ADDRESSES
 
-#define FLEXCAN1_BASE (0x401D0000)
-#define FLEXCAN2_BASE (0x401D4000)
-#define FLEXCAN3_BASE (0x401D8000)
+// FlexCAN Bus 1
+#define FLEXCAN1_BASE   (0x401D'0000u)
+#define FLEXCAN1_END    (0x401D'3FFFu)
+
+// FlexCAN Bus 2
+#define FLEXCAN2_BASE   (0x401D'4000u)
+#define FLEXCAN2_END    (0x401D'7FFFu)
+
+// FlexCAN Bus 3
+#define FLEXCAN3_BASE   (0x401D'8000u)
+#define FLEXCAN3_END    (0x401D'BFFFu)
 
 #pragma endregion
 
+/**********\ BASE REGISTERS /**********/
+#pragma region BASE REGISTERS
 
-// The register addresses per FlexCAN bus
-#pragma region REGISTER ADDRESSES
+//// FlexCAN Bus 1
 
-// todo: CAN1 register addresses
-#pragma region CAN1
-
-// Module Configuration Register
-#define FLEXCAN1_MCR        (FLEXCAN1_BASE + 0x0000)
-// Control 1 Register
-#define FLEXCAN1_CTRL1      (FLEXCAN1_BASE + 0x0004)
-// Free Running Timer Register
-#define FLEXCAN1_TIMER      (FLEXCAN1_BASE + 0x0008)    // + 4
-// Rx Mailboxes Global Mask Register
-#define FLEXCAN1_RXMGMASK   (FLEXCAN1_BASE + 0x0010)
-// Rx Buffer 14 Mask Register
-#define FLEXCAN1_RX14MASK   (FLEXCAN1_BASE + 0x0014)
-// Rx Buffer 15 Mask Register
-#define FLEXCAN1_RX15MASK   (FLEXCAN1_BASE + 0x0018)
-// Error Counter Register
-#define FLEXCAN1_ECR        (FLEXCAN1_BASE + 0x001C)
-// Error and Status 1 Register
-#define FLEXCAN1_ESR1       (FLEXCAN1_BASE + 0x0020)
-// Interrupt Masks 2 Register
-#define FLEXCAN1_IMASK2     (FLEXCAN1_BASE + 0x0024)
-// Interrupt Masks 1 Register
-#define FLEXCAN1_IMASK1     (FLEXCAN1_BASE + 0x0028)
-// Interrupt Flags 2 Register
-#define FLEXCAN1_IFLAG2     (FLEXCAN1_BASE + 0x002C)
-// Interrupt Flags 1 Register
-#define FLEXCAN1_IFLAG1     (FLEXCAN1_BASE + 0x0030)
-// Control 2 Register
-#define FLEXCAN1_CTRL2      (FLEXCAN1_BASE + 0x0034)
-// Error and Status 2 Register
-#define FLEXCAN1_ESR2       (FLEXCAN1_BASE + 0x0038)    // + 12
-// CRC Register
-#define FLEXCAN1_CRCR       (FLEXCAN1_BASE + 0x0044)
-// Rx FIFO Global Mask Register
-#define FLEXCAN1_RXFGMASK   (FLEXCAN1_BASE + 0x0048)
-// Rx FIFO Information Register
-#define FLEXCAN1_RXFIR      (FLEXCAN1_BASE + 0x004C)    // + 12
-// Debug 1 Register
-#define FLEXCAN1_DBG1       (FLEXCAN1_BASE + 0x0058)
-// Debug 2 Register
-#define FLEXCAN1_DBG2       (FLEXCAN1_BASE + 0x005C)    // + 2084   
-
-// Rx Individual Mask Registers
-
-#define FLEXCAN1_RXIMR0     (FLEXCAN1_BASE + 0x0880)
-#define FLEXCAN1_RXIMR1     (FLEXCAN1_BASE + 0x0884)
-#define FLEXCAN1_RXIMR2     (FLEXCAN1_BASE + 0x0888)
-#define FLEXCAN1_RXIMR3     (FLEXCAN1_BASE + 0x088C)
-#define FLEXCAN1_RXIMR4     (FLEXCAN1_BASE + 0x0890)
-#define FLEXCAN1_RXIMR5     (FLEXCAN1_BASE + 0x0894)
-#define FLEXCAN1_RXIMR6     (FLEXCAN1_BASE + 0x0898)
-#define FLEXCAN1_RXIMR7     (FLEXCAN1_BASE + 0x089C)
-#define FLEXCAN1_RXIMR8     (FLEXCAN1_BASE + 0x08A0)
-#define FLEXCAN1_RXIMR9     (FLEXCAN1_BASE + 0x08A4)
-#define FLEXCAN1_RXIMR10    (FLEXCAN1_BASE + 0x08A8)
-#define FLEXCAN1_RXIMR11    (FLEXCAN1_BASE + 0x08AC)
-#define FLEXCAN1_RXIMR12    (FLEXCAN1_BASE + 0x08B0)
-#define FLEXCAN1_RXIMR13    (FLEXCAN1_BASE + 0x08B4)
-#define FLEXCAN1_RXIMR14    (FLEXCAN1_BASE + 0x08B8)
-#define FLEXCAN1_RXIMR15    (FLEXCAN1_BASE + 0x08BC)
-#define FLEXCAN1_RXIMR16    (FLEXCAN1_BASE + 0x08C0)
-#define FLEXCAN1_RXIMR17    (FLEXCAN1_BASE + 0x08C4)
-#define FLEXCAN1_RXIMR18    (FLEXCAN1_BASE + 0x08C8)
-#define FLEXCAN1_RXIMR19    (FLEXCAN1_BASE + 0x08CC)
-#define FLEXCAN1_RXIMR20    (FLEXCAN1_BASE + 0x08D0)
-#define FLEXCAN1_RXIMR21    (FLEXCAN1_BASE + 0x08D4)
-#define FLEXCAN1_RXIMR22    (FLEXCAN1_BASE + 0x08D8)
-#define FLEXCAN1_RXIMR23    (FLEXCAN1_BASE + 0x08DC)
-#define FLEXCAN1_RXIMR24    (FLEXCAN1_BASE + 0x08E0)
-#define FLEXCAN1_RXIMR25    (FLEXCAN1_BASE + 0x08E4)
-#define FLEXCAN1_RXIMR26    (FLEXCAN1_BASE + 0x08E8)
-#define FLEXCAN1_RXIMR27    (FLEXCAN1_BASE + 0x08EC)
-#define FLEXCAN1_RXIMR28    (FLEXCAN1_BASE + 0x08F0)
-#define FLEXCAN1_RXIMR29    (FLEXCAN1_BASE + 0x08F4)
-#define FLEXCAN1_RXIMR30    (FLEXCAN1_BASE + 0x08F8)
-#define FLEXCAN1_RXIMR31    (FLEXCAN1_BASE + 0x08FC)
-#define FLEXCAN1_RXIMR32    (FLEXCAN1_BASE + 0x0900)
-#define FLEXCAN1_RXIMR33    (FLEXCAN1_BASE + 0x0904)
-#define FLEXCAN1_RXIMR34    (FLEXCAN1_BASE + 0x0908)
-#define FLEXCAN1_RXIMR35    (FLEXCAN1_BASE + 0x090C)
-#define FLEXCAN1_RXIMR36    (FLEXCAN1_BASE + 0x0910)
-#define FLEXCAN1_RXIMR37    (FLEXCAN1_BASE + 0x0914)
-#define FLEXCAN1_RXIMR38    (FLEXCAN1_BASE + 0x0918)
-#define FLEXCAN1_RXIMR39    (FLEXCAN1_BASE + 0x091C)
-#define FLEXCAN1_RXIMR40    (FLEXCAN1_BASE + 0x0920)
-#define FLEXCAN1_RXIMR41    (FLEXCAN1_BASE + 0x0924)
-#define FLEXCAN1_RXIMR42    (FLEXCAN1_BASE + 0x0928)
-#define FLEXCAN1_RXIMR43    (FLEXCAN1_BASE + 0x092C)
-#define FLEXCAN1_RXIMR44    (FLEXCAN1_BASE + 0x0930)
-#define FLEXCAN1_RXIMR45    (FLEXCAN1_BASE + 0x0934)
-#define FLEXCAN1_RXIMR46    (FLEXCAN1_BASE + 0x0938)
-#define FLEXCAN1_RXIMR47    (FLEXCAN1_BASE + 0x093C)
-#define FLEXCAN1_RXIMR48    (FLEXCAN1_BASE + 0x0940)
-#define FLEXCAN1_RXIMR49    (FLEXCAN1_BASE + 0x0944)
-#define FLEXCAN1_RXIMR50    (FLEXCAN1_BASE + 0x0948)
-#define FLEXCAN1_RXIMR51    (FLEXCAN1_BASE + 0x094C)
-#define FLEXCAN1_RXIMR52    (FLEXCAN1_BASE + 0x0950)
-#define FLEXCAN1_RXIMR53    (FLEXCAN1_BASE + 0x0954)
-#define FLEXCAN1_RXIMR54    (FLEXCAN1_BASE + 0x0958)
-#define FLEXCAN1_RXIMR55    (FLEXCAN1_BASE + 0x095C)
-#define FLEXCAN1_RXIMR56    (FLEXCAN1_BASE + 0x0960)
-#define FLEXCAN1_RXIMR57    (FLEXCAN1_BASE + 0x0964)
-#define FLEXCAN1_RXIMR58    (FLEXCAN1_BASE + 0x0968)
-#define FLEXCAN1_RXIMR59    (FLEXCAN1_BASE + 0x096C)
-#define FLEXCAN1_RXIMR60    (FLEXCAN1_BASE + 0x0970)
-#define FLEXCAN1_RXIMR61    (FLEXCAN1_BASE + 0x0974)
-#define FLEXCAN1_RXIMR62    (FLEXCAN1_BASE + 0x0978)
-#define FLEXCAN1_RXIMR63    (FLEXCAN1_BASE + 0x097C)    // + 100
-
-// Glitch Filter Width Register
-#define FLEXCAN1_GFWR       (FLEXCAN1_BASE + 0x09E0)
-
-// Rx Individual Mask Registers Macro
-#define FLEXCAN1_RXIMR(i)   (FLEXCAN1_BASE + 0x0880 + (i * 4))
-
-#pragma endregion
-
-
-// todo: CAN2 register addresses
-#pragma region CAN2
-
-// Module Configuration Register
-#define FLEXCAN2_MCR        (FLEXCAN2_BASE + 0x0000)
-// Control 1 Register
-#define FLEXCAN2_CTRL1      (FLEXCAN2_BASE + 0x0004)
-// Free Running Timer Register
-#define FLEXCAN2_TIMER      (FLEXCAN2_BASE + 0x0008)    // + 4
-// Rx Mailboxes Global Mask Register
-#define FLEXCAN2_RXMGMASK   (FLEXCAN2_BASE + 0x0010)
-// Rx Buffer 14 Mask Register
-#define FLEXCAN2_RX14MASK   (FLEXCAN2_BASE + 0x0014)
-// Rx Buffer 15 Mask Register
-#define FLEXCAN2_RX15MASK   (FLEXCAN2_BASE + 0x0018)
-// Error Counter Register
-#define FLEXCAN2_ECR        (FLEXCAN2_BASE + 0x001C)
-// Error and Status 1 Register
-#define FLEXCAN2_ESR1       (FLEXCAN2_BASE + 0x0020)
-// Interrupt Masks 2 Register
-#define FLEXCAN2_IMASK2     (FLEXCAN2_BASE + 0x0024)
-// Interrupt Masks 1 Register
-#define FLEXCAN2_IMASK1     (FLEXCAN2_BASE + 0x0028)
-// Interrupt Flags 2 Register
-#define FLEXCAN2_IFLAG2     (FLEXCAN2_BASE + 0x002C)
-// Interrupt Flags 1 Register
-#define FLEXCAN2_IFLAG1     (FLEXCAN2_BASE + 0x0030)
-// Control 2 Register
-#define FLEXCAN2_CTRL2      (FLEXCAN2_BASE + 0x0034)
-// Error and Status 2 Register
-#define FLEXCAN2_ESR2       (FLEXCAN2_BASE + 0x0038)    // + 12
-// CRC Register
-#define FLEXCAN2_CRCR       (FLEXCAN2_BASE + 0x0044)
-// Rx FIFO Global Mask Register
-#define FLEXCAN2_RXFGMASK   (FLEXCAN2_BASE + 0x0048)
-// Rx FIFO Information Register
-#define FLEXCAN2_RXFIR      (FLEXCAN2_BASE + 0x004C)    // + 12
-// Debug 1 Register
-#define FLEXCAN2_DBG1       (FLEXCAN2_BASE + 0x0058)
-// Debug 2 Register
-#define FLEXCAN2_DBG2       (FLEXCAN2_BASE + 0x005C)    // + 2084
-
-// Rx Individual Mask Registers
-
-#define FLEXCAN2_RXIMR0     (FLEXCAN2_BASE + 0x0880)
-#define FLEXCAN2_RXIMR1     (FLEXCAN2_BASE + 0x0884)
-#define FLEXCAN2_RXIMR2     (FLEXCAN2_BASE + 0x0888)
-#define FLEXCAN2_RXIMR3     (FLEXCAN2_BASE + 0x088C)
-#define FLEXCAN2_RXIMR4     (FLEXCAN2_BASE + 0x0890)
-#define FLEXCAN2_RXIMR5     (FLEXCAN2_BASE + 0x0894)
-#define FLEXCAN2_RXIMR6     (FLEXCAN2_BASE + 0x0898)
-#define FLEXCAN2_RXIMR7     (FLEXCAN2_BASE + 0x089C)
-#define FLEXCAN2_RXIMR8     (FLEXCAN2_BASE + 0x08A0)
-#define FLEXCAN2_RXIMR9     (FLEXCAN2_BASE + 0x08A4)
-#define FLEXCAN2_RXIMR10    (FLEXCAN2_BASE + 0x08A8)
-#define FLEXCAN2_RXIMR11    (FLEXCAN2_BASE + 0x08AC)
-#define FLEXCAN2_RXIMR12    (FLEXCAN2_BASE + 0x08B0)
-#define FLEXCAN2_RXIMR13    (FLEXCAN2_BASE + 0x08B4)
-#define FLEXCAN2_RXIMR14    (FLEXCAN2_BASE + 0x08B8)
-#define FLEXCAN2_RXIMR15    (FLEXCAN2_BASE + 0x08BC)
-#define FLEXCAN2_RXIMR16    (FLEXCAN2_BASE + 0x08C0)
-#define FLEXCAN2_RXIMR17    (FLEXCAN2_BASE + 0x08C4)
-#define FLEXCAN2_RXIMR18    (FLEXCAN2_BASE + 0x08C8)
-#define FLEXCAN2_RXIMR19    (FLEXCAN2_BASE + 0x08CC)
-#define FLEXCAN2_RXIMR20    (FLEXCAN2_BASE + 0x08D0)
-#define FLEXCAN2_RXIMR21    (FLEXCAN2_BASE + 0x08D4)
-#define FLEXCAN2_RXIMR22    (FLEXCAN2_BASE + 0x08D8)
-#define FLEXCAN2_RXIMR23    (FLEXCAN2_BASE + 0x08DC)
-#define FLEXCAN2_RXIMR24    (FLEXCAN2_BASE + 0x08E0)
-#define FLEXCAN2_RXIMR25    (FLEXCAN2_BASE + 0x08E4)
-#define FLEXCAN2_RXIMR26    (FLEXCAN2_BASE + 0x08E8)
-#define FLEXCAN2_RXIMR27    (FLEXCAN2_BASE + 0x08EC)
-#define FLEXCAN2_RXIMR28    (FLEXCAN2_BASE + 0x08F0)
-#define FLEXCAN2_RXIMR29    (FLEXCAN2_BASE + 0x08F4)
-#define FLEXCAN2_RXIMR30    (FLEXCAN2_BASE + 0x08F8)
-#define FLEXCAN2_RXIMR31    (FLEXCAN2_BASE + 0x08FC)
-#define FLEXCAN2_RXIMR32    (FLEXCAN2_BASE + 0x0900)
-#define FLEXCAN2_RXIMR33    (FLEXCAN2_BASE + 0x0904)
-#define FLEXCAN2_RXIMR34    (FLEXCAN2_BASE + 0x0908)
-#define FLEXCAN2_RXIMR35    (FLEXCAN2_BASE + 0x090C)
-#define FLEXCAN2_RXIMR36    (FLEXCAN2_BASE + 0x0910)
-#define FLEXCAN2_RXIMR37    (FLEXCAN2_BASE + 0x0914)
-#define FLEXCAN2_RXIMR38    (FLEXCAN2_BASE + 0x0918)
-#define FLEXCAN2_RXIMR39    (FLEXCAN2_BASE + 0x091C)
-#define FLEXCAN2_RXIMR40    (FLEXCAN2_BASE + 0x0920)
-#define FLEXCAN2_RXIMR41    (FLEXCAN2_BASE + 0x0924)
-#define FLEXCAN2_RXIMR42    (FLEXCAN2_BASE + 0x0928)
-#define FLEXCAN2_RXIMR43    (FLEXCAN2_BASE + 0x092C)
-#define FLEXCAN2_RXIMR44    (FLEXCAN2_BASE + 0x0930)
-#define FLEXCAN2_RXIMR45    (FLEXCAN2_BASE + 0x0934)
-#define FLEXCAN2_RXIMR46    (FLEXCAN2_BASE + 0x0938)
-#define FLEXCAN2_RXIMR47    (FLEXCAN2_BASE + 0x093C)
-#define FLEXCAN2_RXIMR48    (FLEXCAN2_BASE + 0x0940)
-#define FLEXCAN2_RXIMR49    (FLEXCAN2_BASE + 0x0944)
-#define FLEXCAN2_RXIMR50    (FLEXCAN2_BASE + 0x0948)
-#define FLEXCAN2_RXIMR51    (FLEXCAN2_BASE + 0x094C)
-#define FLEXCAN2_RXIMR52    (FLEXCAN2_BASE + 0x0950)
-#define FLEXCAN2_RXIMR53    (FLEXCAN2_BASE + 0x0954)
-#define FLEXCAN2_RXIMR54    (FLEXCAN2_BASE + 0x0958)
-#define FLEXCAN2_RXIMR55    (FLEXCAN2_BASE + 0x095C)
-#define FLEXCAN2_RXIMR56    (FLEXCAN2_BASE + 0x0960)
-#define FLEXCAN2_RXIMR57    (FLEXCAN2_BASE + 0x0964)
-#define FLEXCAN2_RXIMR58    (FLEXCAN2_BASE + 0x0968)
-#define FLEXCAN2_RXIMR59    (FLEXCAN2_BASE + 0x096C)
-#define FLEXCAN2_RXIMR60    (FLEXCAN2_BASE + 0x0970)
-#define FLEXCAN2_RXIMR61    (FLEXCAN2_BASE + 0x0974)
-#define FLEXCAN2_RXIMR62    (FLEXCAN2_BASE + 0x0978)
-#define FLEXCAN2_RXIMR63    (FLEXCAN2_BASE + 0x097C)    // + 100
-
-// Glitch Filter Width Register
-#define FLEXCAN2_GFWR       (FLEXCAN2_BASE + 0x09E0)
-
-// Rx Individual Mask Registers Macro
-#define FLEXCAN2_RXIMR(i)   (FLEXCAN2_BASE + 0x0880 + (i * 4))
-
-#pragma endregion
-
-
-// todo: CAN3 register addresses
-#pragma region CAN3
 
 
 #pragma endregion
 
-#pragma endregion
-
-
-// The register contents per FlexCAN bus and register
-#pragma region REGISTER CONTENTS
-
-// todo: CAN1 Register Info
-#pragma region CAN1
-
-#pragma endregion
-
-// todo: CAN2 Register Info
-#pragma region CAN2
-
-#pragma endregion
-
-// todo: CAN3 Register Info
-#pragma region CAN3
-
-#pragma endregion
-
-#pragma endregion
-
-#endif // BUFFCAN_REGISTERS_HPP
+#endif // BUFFCAN_IMXRT1062_REGISTERS_HPP
