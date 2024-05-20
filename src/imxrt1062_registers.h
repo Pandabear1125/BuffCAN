@@ -435,12 +435,6 @@
 // Individual Message Buffers  (R/W)
 #define FLEXCAN3_NUM_8B_MB_		(64ul)
 #define FLEXCAN3_8B_MBx(x)		(FLEXCAN3_MB_BASE_ + (x * 0x10ul))
-#define FLEXCAN3_NUM_16B_MB_ 	(42ul)
-#define FLEXCAN3_16B_MBx(x)		(FLEXCAN3_MB_BASE_ + (x * 0x18ul))
-#define FLEXCAN3_NUM_32B_MB_	(24ul)
-#define FLEXCAN3_32B_MBx(x)		(FLEXCAN3_MB_BASE_ + (x * 0x28ul))
-#define FLEXCAN3_NUM_64B_MB_	(14ul)
-#define FLEXCAN3_64B_MBx(x)		(FLEXCAN3_MB_BASE_ + (x * 0x48ul))
 
 #define FLEXCAN3_8B_MB0_		(FLEXCAN3_MB_BASE_ + 0x0000ul)
 #define FLEXCAN3_8B_MB1_		(FLEXCAN3_MB_BASE_ + 0x0010ul)
@@ -508,6 +502,9 @@
 #define FLEXCAN3_8B_MB63_		(FLEXCAN3_MB_BASE_ + 0x03F0ul)
 
 // TODO: Verify these are correct. The datasheet appears to have a discrepancy on the offset of MB22
+#define FLEXCAN3_NUM_16B_MB_ 	(42ul)
+#define FLEXCAN3_16B_MBx(x)		(FLEXCAN3_MB_BASE_ + (x * 0x18ul))
+
 #define FLEXCAN3_16B_MB0_		(FLEXCAN3_MB_BASE_ + 0x0000ul)
 #define FLEXCAN3_16B_MB1_		(FLEXCAN3_MB_BASE_ + 0x0018ul)
 #define FLEXCAN3_16B_MB2_		(FLEXCAN3_MB_BASE_ + 0x0030ul)
@@ -552,6 +549,9 @@
 #define FLEXCAN3_16B_MB41_		(FLEXCAN3_MB_BASE_ + 0x03D8ul)
 
 // TODO: Verify these are correct. The datasheet appears to have a discrepancy on the offset of MB12
+#define FLEXCAN3_NUM_32B_MB_	(24ul)
+#define FLEXCAN3_32B_MBx(x)		(FLEXCAN3_MB_BASE_ + (x * 0x28ul))
+
 #define FLEXCAN3_32B_MB0_		(FLEXCAN3_MB_BASE_ + 0x0000ul)
 #define FLEXCAN3_32B_MB1_		(FLEXCAN3_MB_BASE_ + 0x0028ul)
 #define FLEXCAN3_32B_MB2_		(FLEXCAN3_MB_BASE_ + 0x0050ul)
@@ -578,6 +578,9 @@
 #define FLEXCAN3_32B_MB23_		(FLEXCAN3_MB_BASE_ + 0x0398ul)
 
 // TODO: Verify these are correct. The datasheet appears to have a discrepancy on the offset of MB7
+#define FLEXCAN3_NUM_64B_MB_	(14ul)
+#define FLEXCAN3_64B_MBx(x)		(FLEXCAN3_MB_BASE_ + (x * 0x48ul))
+
 #define FLEXCAN3_64B_MB0_		(FLEXCAN3_MB_BASE_ + 0x0000ul)
 #define FLEXCAN3_64B_MB1_		(FLEXCAN3_MB_BASE_ + 0x0048ul)
 #define FLEXCAN3_64B_MB2_		(FLEXCAN3_MB_BASE_ + 0x0090ul)
@@ -671,7 +674,7 @@
 #pragma endregion // BASE REGISTERS
 
 ////////////////////////////////////////
-// FlexCAN REGISTER BIT MASKS         //
+// FlexCAN Per-Register Masks         //
 ////////////////////////////////////////
 #pragma region REGISTER INFO
 
@@ -1184,5 +1187,45 @@
 
 
 #pragma endregion
+
+////////////////////////////////////////
+// FlexCAN Message Buffer Info        //
+////////////////////////////////////////
+#pragma region MESSAGE BUFFER INFO
+
+//// Message Buffer Structure Definitions
+
+#define FLEXCAN_MB_WORD_CS				0
+#define FLEXCAN_MB_WORD_ID				1
+#define FLEXCAN_MB_WORD_DATA0			2
+#define FLEXCAN_MB_WORD_DATA1			3
+
+/// Message Buffer Control and Status Word 
+#define FLEXCAN_MB_CS_CODE				(0xFul << 24ul)			// 4 bits
+#define FLEXCAN_MB_CS_SRR				(0x1ul << 22ul)			// 1 bit
+#define FLEXCAN_MB_CS_IDE				(0x1ul << 21ul)			// 1 bit
+#define FLEXCAN_MB_CS_RTR				(0x1ul << 20ul)			// 1 bit
+#define FLEXCAN_MB_CS_DLC				(0xFul << 16ul)			// 4 bits
+#define FLEXCAN_MB_CS_TIMESTAMP			(0xFFFFul << 0ul)		// 16 bits
+
+/// Message Buffer ID Word
+#define FLEXCAN_MB_ID_PRIO				(0x7ul << 29ul)			// 3 bits
+#define FLEXCAN_MB_ID_STD				(0x7FFul << 18ul)		// 11 bits
+#define FLEXCAN_MB_ID_EXT				(0x1FFFFFFFul << 0ul)	// 29 bits
+
+/// Message Buffer CODE Codes
+#define FLEXCAN_MB_CODE_RX_INACTIVE		(0b0000ul)
+#define FLEXCAN_MB_CODE_RX_EMPTY		(0b0100ul)
+#define FLEXCAN_MB_CODE_RX_FULL			(0b0010ul)
+#define FLEXCAN_MB_CODE_RX_OVERRUN		(0b0110ul)
+#define FLEXCAN_MB_CODE_RX_RANSWER		(0b1010ul)
+#define FLEXCAN_MB_CODE_RX_BUSY			(0b0001ul)				// this is a mask
+#define FLEXCAN_MB_CODE_TX_INACTIVE		(0b1000ul)
+#define FLEXCAN_MB_CODE_TX_ABORT		(0b1001ul)
+#define FLEXCAN_MB_CODE_TX_DATA			(0b1100ul)
+#define FLEXCAN_MB_CODE_TX_REMOTE		(0b1100ul)
+#define FLEXCAN_MB_CODE_TX_TANSWER		(0b1110ul)
+
+#pragma endregion // MESSAGE BUFFER INFO
 
 #endif// BUFFCAN_IMXRT1062_REGISTERS_HPP
