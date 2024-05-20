@@ -24,7 +24,7 @@ int main_init() {
     Serial.printf("Hello, world!\n");
 
     pinMode(13, OUTPUT);
-    __disable_irq();
+    // __disable_irq();
     return 1;
 }
 
