@@ -1193,14 +1193,15 @@
 ////////////////////////////////////////
 #pragma region MESSAGE BUFFER INFO
 
-//// Message Buffer Structure Definitions
+/// Message Buffer Sections
 
-#define FLEXCAN_MB_WORD_CS				0
-#define FLEXCAN_MB_WORD_ID				1
-#define FLEXCAN_MB_WORD_DATA0			2
-#define FLEXCAN_MB_WORD_DATA1			3
+#define FLEXCAN_MB_WORD_CS				(0)
+#define FLEXCAN_MB_WORD_ID				(1)
+#define FLEXCAN_MB_WORD_DATA0			(2)
+#define FLEXCAN_MB_WORD_DATA1			(3)
 
 /// Message Buffer Control and Status Word 
+
 #define FLEXCAN_MB_CS_CODE				(0xFul << 24ul)			// 4 bits
 #define FLEXCAN_MB_CS_SRR				(0x1ul << 22ul)			// 1 bit
 #define FLEXCAN_MB_CS_IDE				(0x1ul << 21ul)			// 1 bit
@@ -1209,11 +1210,13 @@
 #define FLEXCAN_MB_CS_TIMESTAMP			(0xFFFFul << 0ul)		// 16 bits
 
 /// Message Buffer ID Word
+
 #define FLEXCAN_MB_ID_PRIO				(0x7ul << 29ul)			// 3 bits
 #define FLEXCAN_MB_ID_STD				(0x7FFul << 18ul)		// 11 bits
 #define FLEXCAN_MB_ID_EXT				(0x1FFFFFFFul << 0ul)	// 29 bits
 
 /// Message Buffer CODE Codes
+
 #define FLEXCAN_MB_CODE_RX_INACTIVE		(0b0000ul)
 #define FLEXCAN_MB_CODE_RX_EMPTY		(0b0100ul)
 #define FLEXCAN_MB_CODE_RX_FULL			(0b0010ul)
