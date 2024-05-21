@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "utils.h"
+#include "debug.h"
 #include "imxrt1062_registers.h"
 
 int main_init();
@@ -20,7 +20,9 @@ int main() {
 }
 
 int main_init() {
-    Serial.begin(115200);
+	// allow a small wait for Serial to be displayed
+	while (!Serial);
+	
     Serial.printf("Hello, world!\n");
 
     pinMode(13, OUTPUT);
@@ -29,13 +31,7 @@ int main_init() {
 }
 
 int main_loop() {
-    Serial.printf("Looping...\n");
-    uint32_t start = micros();
-
     diagnostic_blink();
 
-    Serial.printf("ARM_DWT_CYCCNT: %u\n", ARM_DWT_CYCCNT);
-
-    Serial.printf("%lu\n", micros() - start);
     return 1;
 }

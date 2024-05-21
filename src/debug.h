@@ -4,8 +4,8 @@
 
 void diagnostic_blink() {
     if (millis() % 1000 < 500) {
-        digitalWrite(LED_BUILTIN, HIGH);
+        digitalWriteFast(LED_BUILTIN, HIGH);
     } else {
-        digitalWrite(LED_BUILTIN, LOW);
+        digitalWriteFast(LED_BUILTIN, LOW);
     }
 }
