@@ -723,6 +723,142 @@ typedef volatile uint32_t* vptr_t;
 
 // Each of these register sections act as bitmasks for the register
 
+// FlexCAN Bus-Agnostic
+
+/// Module Configuration Register - FLEXCANx_MCR - (R/W)
+#define FLEXCANx_MCR_MDIS				(0x1ul << 31ul)			// 1 bit
+#define FLEXCANx_MCR_FRZ				(0x1ul << 30ul)			// 1 bit
+#define FLEXCANx_MCR_FEN				(0x1ul << 29ul)			// 1 bit
+#define FLEXCANx_MCR_HALT				(0x1ul << 28ul)			// 1 bit
+#define FLEXCANx_MCR_NOTRDY				(0x1ul << 27ul)			// 1 bit
+#define FLEXCANx_MCR_WAK_MSK			(0x1ul << 26ul)			// 1 bit
+#define FLEXCANx_MCR_SOFT_RST			(0x1ul << 25ul)			// 1 bit
+#define FLEXCANx_MCR_FRZ_ACK			(0x1ul << 24ul)			// 1 bit
+#define FLEXCANx_MCR_SUPV				(0x1ul << 23ul)			// 1 bit
+#define FLEXCANx_MCR_SLF_WAK			(0x1ul << 22ul)			// 1 bit
+#define FLEXCANx_MCR_WRN_EN				(0x1ul << 21ul)			// 1 bit
+#define FLEXCANx_MCR_LPM_ACK			(0x1ul << 20ul)			// 1 bit
+#define FLEXCANx_MCR_WAK_SRC			(0x1ul << 19ul)			// 1 bit
+// reserved 18
+#define FLEXCANx_MCR_SRX_DIS			(0x1ul << 17ul)			// 1 bit
+#define FLEXCANx_MCR_IRMQ				(0x1ul << 16ul)			// 1 bit
+// reserved 15
+// reserved 14
+#define FLEXCANx_MCR_LPRIO_EN			(0x1ul << 13ul) 		// 1 bit
+#define FLEXCANx_MCR_AEN				(0x1ul << 12ul) 		// 1 bit
+// reserved 11
+// reserved 10
+#define FLEXCANx_MCR_IDAM				(0x3ul << 8ul)			// 2 bits
+// reserved 7
+#define FLEXCANx_MCR_MAXMB				(0x7Ful << 0ul) 		// 7 bits
+
+/// Control 1 Register - FLEXCANx_CTRL1 - (R/W)
+#define FLEXCANx_CTRL1_PRESDIV			(0xFFul << 24ul)		// 8 bits
+#define FLEXCANx_CTRL1_RJW				(0x3ul << 22ul)			// 2 bits
+#define FLEXCANx_CTRL1_PSEG1			(0x7ul << 19ul)			// 3 bits
+#define FLEXCANx_CTRL1_PSEG2			(0x7ul << 16ul)			// 3 bits
+#define FLEXCANx_CTRL1_BOFF_MSK			(0x1ul << 15ul)			// 1 bit
+#define FLEXCANx_CTRL1_ERR_MSK			(0x1ul << 14ul)			// 1 bit
+// reserved 13
+#define FLEXCANx_CTRL1_LPB				(0x1ul << 12ul)			// 1 bit
+#define FLEXCANx_CTRL1_TWRN_MSK			(0x1ul << 11ul)			// 1 bit
+#define FLEXCANx_CTRL1_RWRN_MSK			(0x1ul << 10ul)			// 1 bit
+// reserved 9
+// reserved 8
+#define FLEXCANx_CTRL1_SMP				(0x1ul << 7ul)			// 1 bit
+#define FLEXCANx_CTRL1_BOFF_REC			(0x1ul << 6ul)			// 1 bit
+#define FLEXCANx_CTRL1_TSYN				(0x1ul << 5ul)			// 1 bit
+#define FLEXCANx_CTRL1_LBUF				(0x1ul << 4ul)			// 1 bit
+#define FLEXCANx_CTRL1_LOM				(0x1ul << 3ul)			// 1 bit
+#define FLEXCANx_CTRL1_PROP_SEG			(0x7ul << 0ul)			// 3 bits
+
+/// Free Running Timer Register - FLEXCANx_TIMER - (R/W)
+#define FLEXCANx_TIMER_TIMER			(0xFFFFul << 0ul) 		// 16 bits
+// reserved 16 - 31
+
+/// Receiving Mailboxes Global Mask Register - FLEXCANx_RXMGMASK - (R/W)
+#define FLEXCANx_RXMGMASK_MASK			(0xFFFFFFFFul << 0ul) 	// 32 bits
+
+/// Receiving 14 Mask Register - FLEXCANx_RX14MASK - (R/W)
+#define FLEXCANx_RX14MASK_MASK			(0xFFFFFFFFul << 0ul) 	// 32 bits
+
+/// Receiving 15 Mask Register - FLEXCANx_RX15MASK - (R/W)
+#define FLEXCANx_RX15MASK_MASK			(0xFFFFFFFFul << 0ul) 	// 32 bits
+
+/// Error Counter - FLEXCANx_ECR - (R/W)
+// reserved 31 - 16
+#define FLEXCANx_ECR_RX_ERR_COUNTER		(0xFFul << 8ul) 		// 8 bits
+#define FLEXCANx_ECR_TX_ERR_COUNTER		(0xFFul << 0ul) 		// 8 bits
+
+/// Error and Status 1 Register - FLEXCANx_ESR1 - (Read Clears Register)
+// reserved 31 - 19
+#define FLEXCANx_ESR1_SYNCH				(0x1ul << 18ul) 		// 1 bit
+#define FLEXCANx_ESR1_TWRN_INT			(0x1ul << 17ul) 		// 1 bit
+#define FLEXCANx_ESR1_RWRN_INT			(0x1ul << 16ul) 		// 1 bit
+#define FLEXCANx_ESR1_BIT1_ERR			(0x1ul << 15ul) 		// 1 bit
+#define FLEXCANx_ESR1_BIT0_ERR			(0x1ul << 14ul) 		// 1 bit
+#define FLEXCANx_ESR1_ACK_ERR			(0x1ul << 13ul) 		// 1 bit
+#define FLEXCANx_ESR1_CRC_ERR			(0x1ul << 12ul) 		// 1 bit
+#define FLEXCANx_ESR1_FRM_ERR			(0x1ul << 11ul) 		// 1 bit
+#define FLEXCANx_ESR1_STF_ERR			(0x1ul << 10ul) 		// 1 bit
+#define FLEXCANx_ESR1_TX_WRN			(0x1ul << 9ul)			// 1 bit
+#define FLEXCANx_ESR1_RX_WRN			(0x1ul << 8ul)			// 1 bit
+#define FLEXCANx_ESR1_IDLE				(0x1ul << 7ul)			// 1 bit
+#define FLEXCANx_ESR1_TX				(0x1ul << 6ul)			// 1 bit
+#define FLEXCANx_ESR1_FLT_CONF			(0x3ul << 4ul)			// 2 bits
+#define FLEXCANx_ESR1_RX				(0x1ul << 3ul)			// 1 bit
+#define FLEXCANx_ESR1_BOFF_INT			(0x1ul << 2ul)			// 1 bit
+#define FLEXCANx_ESR1_ERR_INT			(0x1ul << 1ul)			// 1 bit
+#define FLEXCANx_ESR1_WAK_INT			(0x1ul << 0ul)			// 1 bit
+
+/// Interrupt Masks 2 Register - FLEXCANx_IMASK2 - (R/W)
+#define FLEXCANx_IMASK2_MASK			(0xFFFFFFFFul << 0ul) 	// 32 bits
+
+/// Interrupt Masks 1 Register - FLEXCANx_IMASK1 - (R/W)
+#define FLEXCANx_IMASK1_MASK			(0xFFFFFFFFul << 0ul) 	// 32 bits
+
+/// Interrupt Flags 2 Register - FLEXCANx_IFLAG2 - (R/W - Write 1s to clear)
+#define FLEXCANx_IFLAG2_MASK			(0xFFFFFFFFul << 0ul) 	// 32 bits
+
+/// Interrupt Flags 1 Register - FLEXCANx_IFLAG1 - (R/W - Write 1s to clear)
+#define FLEXCANx_IFLAG1_BUF31TO8		(0xFFFFFFul << 8ul) 	// 24 bits
+#define FLEXCANx_IFLAG1_BUF7			(0x1ul << 7ul)			// 1 bit
+#define FLEXCANx_IFLAG1_BUF6			(0x1ul << 6ul)			// 1 bit
+#define FLEXCANx_IFLAG1_BUF5			(0x1ul << 5ul)			// 1 bit
+#define FLEXCANx_IFLAG1_BUF4TO0			(0x1Ful << 0ul) 		// 5 bits
+
+/// Control 2 Register - FLEXCANx_CTRL2 - (R/W)
+// bit 31 must be 0
+// reserved 30 - 29
+#define FLEXCANx_CTRL2_WRMFRZ			(0x1ul << 28ul) 		// 1 bit
+#define FLEXCANx_CTRL2_RFFN				(0xFul << 24ul) 		// 4 bits
+#define FLEXCANx_CTRL2_TASD				(0x1Ful << 19ul)		// 5 bits
+#define FLEXCANx_CTRL2_MRP				(0x1ul << 18ul) 		// 1 bit
+#define FLEXCANx_CTRL2_RRS				(0x1ul << 17ul) 		// 1 bit
+#define FLEXCANx_CTRL2_EACEN			(0x1ul << 16ul) 		// 1 bit
+// reserved 15 - 0
+
+/// Error and Status 2 Register - FLEXCANx_ESR2 - (Read Clears Register)
+// reserved 31 - 23
+#define FLEXCANx_ESR2_LPTM				(0x7Ful << 16ul)		// 7 bits
+// reserved 15
+#define FLEXCANx_ESR2_VPS				(0x1ul << 14ul) 		// 1 bit
+#define FLEXCANx_ESR2_IMB				(0x1ul << 13ul) 		// 1 bit
+// reserved 12 - 0
+
+/// CRC Register - FLEXCANx_CRCR - (R/W)
+// reserved 31 - 23
+#define FLEXCANx_CRCR_MBCRC				(0x7Ful << 16ul)		// 7 bits
+// reserved 15
+#define FLEXCANx_CRCR_TXCRC				(0x7FFFul << 0ul) 		// 15 bits
+
+/// Rx FIFO Global Mask Register - FLEXCANx_RXFGMASK - (R/W)
+#define FLEXCANx_RXFGMASK_MASK			(0xFFFFFFFFul << 0ul) 	// 32 bits
+
+/// Rx FIFO Information Register - FLEXCANx_RXFIR - (Read Only)
+// reserved 31 - 9
+#define FLEXCANx_RXFIR_IDHIT			(0x1FFul << 0ul)		// 9 bits
+
 // FlexCAN BUS 1
 
 /// Module Configuration Register - FLEXCANx_MCR - (R/W)
