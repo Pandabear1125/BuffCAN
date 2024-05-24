@@ -9,12 +9,29 @@ void buffcan_init(BuffCAN_t* pCan) {
 	buffcan_enable_register_clock(pCan);
 	buffcan_enable_module_clock(pCan);
 
-	// enable the module (this does nothing if Teensy was just powered on)
-	buffcan_enable_module(pCan);
-
+	// enable the rx and tx pins
 	buffcan_enable_rx(pCan);
 	buffcan_enable_tx(pCan, false);
 
+	// enable the module (this does nothing if Teensy was just powered on)
+	buffcan_mode_exit_disable(pCan);
+
+	// enter into freeze mode (this does nothing if Teensy was just powered on)
+	buffcan_mode_enter_freeze(pCan);
+
+	// configure the MCR register
+
+
+	// configure the CTRL1/2 registers
+
+
+	// configure the Message Buffers
+
+
+	// configure the RXIMR registers
+
+
+	// exit freeze mode
 
 	buffcan_print_MCR(pCan);
 }
@@ -35,14 +52,6 @@ void buffcan_enable_module_clock(BuffCAN_t* pCan) {
 	// set 0b01 in CLK_SEL to enable the 24MH osc_clk
 	// set 0b000000 in CLK_PODF to divide the above clock by 1
 	CCM_CSCMR2 = (CCM_CSCMR2 & 0xFFFFFC03) | CCM_CSCMR2_CAN_CLK_SEL(0b01) | CCM_CSCMR2_CAN_CLK_PODF(0b000000);
-}
-
-void buffcan_enable_module(BuffCAN_t* pCan) {
-	// negate the MCR[MDIS] bit to enable FlexCAN
-	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_MDIS;
-
-	// block while MCR[LPM] acknowledgement
-	while (*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_LPM_ACK);
 }
 
 void buffcan_enable_rx(BuffCAN_t* pCan) {
@@ -107,6 +116,11 @@ void buffcan_enable_tx(BuffCAN_t* pCan, int alt_tx) {
 	}
 }
 
+void buffcan_enable_fifo(BuffCAN_t* pCan) {
+	// assert the MCR[RFEN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_FREN;
+}
+
 void buffcan_disable_register_clock(BuffCAN_t* pCan) {
 	// negate can1_serial_clk_enable and can1_clk_enable
 	if (pCan->bus == CAN1)
@@ -125,13 +139,78 @@ void buffcan_disable_module_clock(BuffCAN_t* pCan) {
 	CCM_CSCMR2 = (CCM_CSCMR2 & 0xFFFFFC03) | CCM_CSCMR2_CAN_CLK_SEL(0b11) | CCM_CSCMR2_CAN_CLK_PODF(0b000000);
 }
 
-void buffcan_disable_module(BuffCAN_t* pCan) {
-	// assert the MCR[MDIS] bit to disable FlexCAN
-	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_MDIS;
+void buffcan_disable_rx(BuffCAN_t* pCan) {
+	// reset the respecive GPIO settings to their defaults
+	if (pCan->bus == CAN1) {
+		// from the Teensy electrical wiring schematic, Teensy pin 23 for CRX1 is wired to GPIO_AD_B1_O9
+		
+		// enable ALT2 for the IOMUXC_FLEXCAN1_RX_SELECT_INPUT register
+		IOMUXC_FLEXCAN1_RX_SELECT_INPUT = (IOMUXC_FLEXCAN1_RX_SELECT_INPUT & 0xFFFFFFFC) | 0x00000000;
+		// enable ALT2 for the MUX GPIO and set SION
+		IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B1_09 = (IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B1_09 & 0xFFFFFFE0) | 0x00000005;
+		// set the default settings for this pin
+		IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B1_09 = (IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B1_09 & 0xFFFE0706) | 0x000010B0;
+	} else if (pCan->bus == CAN2) {
+		// from the Teensy electrical wiring schematic, Teensy pin 0 for CRX2 is wired to GPIO_AD_B0_03
 
-	// block until MCR[LPM] acknowledgement
-	while (!(*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_LPM_ACK));
+		// enable ALT0 for the IOMUXC_FLEXCAN2_RX_SELECT_INPUT register
+		IOMUXC_FLEXCAN2_RX_SELECT_INPUT = (IOMUXC_FLEXCAN2_RX_SELECT_INPUT & 0xFFFFFFFC) | 0x00000000;
+		// enable ALT0 for the MUX GPIO and set SION
+		IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B0_03 = (IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B0_03 & 0xFFFFFFE0) | 0x00000005;
+		// set the default settings for this pin
+		IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B0_03 = (IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B0_03 & 0xFFFE0706) | 0x000010B0;
+	} else if (pCan->bus == CAN3) {
+		// from the Teensy electrical wiring schematic, Teensy pin 30 for CRX3 is wired to GPIO_EMC_37
+
+		// enable ALT9 for the IOMUXC_FLEXCAN2_RX_SELECT_INPUT register
+		IOMUXC_FLEXCAN2_RX_SELECT_INPUT = (IOMUXC_FLEXCAN2_RX_SELECT_INPUT & 0xFFFFFFFC) | 0x00000000;
+		// enable ALT9 for the MUX GPIO and set SION
+		IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_37 = (IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_37 & 0xFFFFFFE0) | 0x00000005;
+		// set the default settings for this pin
+		IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_37 = (IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_37 & 0xFFFE0706) | 0x000010B0;
+	}
 }
+
+void buffcan_disable_tx(BuffCAN_t* pCan, int alt_tx) {
+	// reset the respective GPIO settings to their defaults
+	if (pCan->bus == CAN1) {
+		// from the Teensy electrical wiring schematic, Teensy pin 22 for CRX1 is wired to GPIO_AD_B1_O8
+		if (alt_tx) {
+			// enable ALT2 for the MUX GPIO and set SION
+			IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_02 = (IOMUXC_SW_MUX_CTL_PAD_GPIO_B0_02 & 0xFFFFFFE0) | 0x00000005;
+			// set the default settings for this pin
+			IOMUXC_SW_PAD_CTL_PAD_GPIO_B0_02 = (IOMUXC_SW_PAD_CTL_PAD_GPIO_B0_02 & 0xFFFE0706) | 0x000010B0;
+		} else {
+			// enable ALT2 for the MUX GPIO and set SION
+			IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B1_08 = (IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B1_08 & 0xFFFFFFE0) | 0x00000005;
+			// set the default settings for this pin
+			IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B1_08 = (IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B1_08 & 0xFFFE0706) | 0x000010B0;
+		}
+	} else if (pCan->bus == CAN2) {
+		// from the Teensy electrical wiring schematic, Teensy pin 1 for CRX2 is wired to GPIO_AD_B0_02
+
+		// enable ALT0 for the MUX GPIO and set SION
+		IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B0_02 = (IOMUXC_SW_MUX_CTL_PAD_GPIO_AD_B0_02 & 0xFFFFFFE0) | 0x00000005;
+		// set the default settings for this pin
+		IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B0_02 = (IOMUXC_SW_PAD_CTL_PAD_GPIO_AD_B0_02 & 0xFFFE0706) | 0x000010B0;
+	} else if (pCan->bus == CAN3) {
+		// from the Teensy electrical wiring schematic, Teensy pin 31 for CRX3 is wired to GPIO_EMC_36
+
+		// enable ALT9 for the MUX GPIO and set SION
+		IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_36 = (IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_36 & 0xFFFFFFE0) | 0x00000005;
+		// set the default settings for this pin
+		IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_36 = (IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_36 & 0xFFFE0706) | 0x000010B0;
+	}
+}
+
+void buffcan_disable_fifo(BuffCAN_t* pCan) {
+	// negate the MCR[RFEN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_FREN;
+}
+
+////////////////////////////////////////
+// Mode Switch Functions              //
+////////////////////////////////////////
 
 void buffcan_mode_enter_freeze(BuffCAN_t* pCan) {
 	// assert the MCR[FRZ] and the MCR[HALT] bit to trigger freeze mode
@@ -141,6 +220,47 @@ void buffcan_mode_enter_freeze(BuffCAN_t* pCan) {
 	while (!(*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_FRZ_ACK));
 }
 
+void buffcan_mode_enter_listen_only(BuffCAN_t* pCan) {
+	// assert the CTRL1[LOM] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) |= FLEXCANx_CTRL1_LOM;
+}
+
+void buffcan_mode_enter_loop_back(BuffCAN_t* pCan) {
+	// assert the CTRL1[LPB] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) |= FLEXCANx_CTRL1_LPB;
+}
+
+void buffcan_mode_enter_disable(BuffCAN_t* pCan) {
+	// assert the MCR[MDIS] bit to disable FlexCAN
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_MDIS;
+
+	// block until MCR[LPM] acknowledgement
+	while (!(*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_LPM_ACK));
+}
+
+void buffcan_mode_enter_stop(BuffCAN_t* pCan) {
+	if (pCan->bus == CAN1) {
+		// assert the CAN1_STOP_REQ bit in the GPR4 register
+		IOMUXC_GPR_GPR4 |= IOMUXC_GPR_GPR4_CAN1_STOP_REQ;
+
+		// block until acknowledgement
+		while (!(IOMUXC_GPR_GPR4 & IOMUXC_GPR_GPR4_CAN1_STOP_ACK));
+	} else if (pCan->bus == CAN2) {
+		// assert the CAN2_STOP_REQ bit in the GPR4 register
+		IOMUXC_GPR_GPR4 |= IOMUXC_GPR_GPR4_CAN2_STOP_REQ;
+
+		// block until acknowledgement
+		while (!(IOMUXC_GPR_GPR4 & IOMUXC_GPR_GPR4_CAN2_STOP_ACK));
+	} else if (pCan->bus == CAN3) {
+		// assert the CANFD_STOP_REQ bit in the GPR13 register
+		IOMUXC_GPR_GPR13 |= IOMUXC_GPR_GPR13_CANFD_STOP_REQ;
+
+		// block until acknowledgement
+		while (!(IOMUXC_GPR_GPR13 & IOMUXC_GPR_GPR13_CANFD_STOP_ACK));
+	}
+}
+
+
 void buffcan_mode_exit_freeze(BuffCAN_t* pCan) {
 	// negate the MCR[FRZ] and the MCR[HALT] bits to trigger an exit from freeze mode
 	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~(FLEXCANx_MCR_FRZ | FLEXCANx_MCR_HALT);
@@ -148,6 +268,51 @@ void buffcan_mode_exit_freeze(BuffCAN_t* pCan) {
 	// block until FlexCAN acknowledges
 	while (*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_FRZ_ACK);
 }
+
+void buffcan_mode_exit_listen_only(BuffCAN_t* pCan) {
+	// negate the CTRL1[LOM] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) &= ~FLEXCANx_CTRL1_LOM;
+}
+
+void buffcan_mode_exit_loop_back(BuffCAN_t* pCan) {
+	// negate the CTRL1[LPB] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) &= ~FLEXCANx_CTRL1_LPB;
+}
+
+void buffcan_mode_exit_disable(BuffCAN_t* pCan) {
+	// negate the MCR[MDIS] bit to enable FlexCAN
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_MDIS;
+
+	// block while MCR[LPM] acknowledgement
+	while (*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_LPM_ACK);
+
+}
+
+void buffcan_mode_exit_stop(BuffCAN_t* pCan) {
+	if (pCan->bus == CAN1) {
+		// assert the CAN1_STOP_REQ bit in the GPR4 register
+		IOMUXC_GPR_GPR4 &= ~IOMUXC_GPR_GPR4_CAN1_STOP_REQ;
+
+		// block until acknowledgement
+		while (IOMUXC_GPR_GPR4 & IOMUXC_GPR_GPR4_CAN1_STOP_ACK);
+	} else if (pCan->bus == CAN2) {
+		// assert the CAN2_STOP_REQ bit in the GPR4 register
+		IOMUXC_GPR_GPR4 &= ~IOMUXC_GPR_GPR4_CAN2_STOP_REQ;
+
+		// block until acknowledgement
+		while (IOMUXC_GPR_GPR4 & IOMUXC_GPR_GPR4_CAN2_STOP_ACK);
+	} else if (pCan->bus == CAN3) {
+		// assert the CANFD_STOP_REQ bit in the GPR13 register
+		IOMUXC_GPR_GPR13 &= ~IOMUXC_GPR_GPR13_CANFD_STOP_REQ;
+
+		// block until acknowledgement
+		while (IOMUXC_GPR_GPR13 & IOMUXC_GPR_GPR13_CANFD_STOP_ACK);
+	}
+}
+
+////////////////////////////////////////
+// Debug Functions                    //
+////////////////////////////////////////
 
 void buffcan_print_MCR(BuffCAN_t* pCan) {
 	uint32_t mcr = *(vptr_t)FLEXCANx_MCR(pCan->bus);
@@ -157,7 +322,7 @@ void buffcan_print_MCR(BuffCAN_t* pCan) {
 		mcr,
 		!!(mcr & FLEXCANx_MCR_MDIS),
 		!!(mcr & FLEXCANx_MCR_FRZ),
-		!!(mcr & FLEXCANx_MCR_FEN),
+		!!(mcr & FLEXCANx_MCR_FREN),
 		!!(mcr & FLEXCANx_MCR_HALT),
 		!!(mcr & FLEXCANx_MCR_NOTRDY),
 		!!(mcr & FLEXCANx_MCR_WAK_MSK),
@@ -176,3 +341,4 @@ void buffcan_print_MCR(BuffCAN_t* pCan) {
 		(mcr & FLEXCANx_MCR_MAXMB)
 	);
 }
+
