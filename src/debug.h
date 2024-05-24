@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BUFFCAN_DEBUG_H
+#define BUFFCAN_DEBUG_H
 
 #include <Arduino.h>
 
@@ -9,3 +10,5 @@ void diagnostic_blink() {
         digitalWriteFast(LED_BUILTIN, LOW);
     }
 }
+
+#endif  // BUFFCAN_DEBUG_H

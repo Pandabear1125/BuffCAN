@@ -3,6 +3,8 @@
 #include "debug.h"
 #include "imxrt1062_registers.h"
 
+#include "buffcan.h"
+
 int main_init();
 int main_loop();
 
@@ -20,13 +22,18 @@ int main() {
 }
 
 int main_init() {
-	// allow a small wait for Serial to be displayed
+	// pause until the Serial monitor is connected
 	while (!Serial);
+
+	BuffCAN_t can;
+	can.bus = CAN1;
+
+	buffcan_init(&can);
 	
     Serial.printf("Hello, world!\n");
 
     pinMode(13, OUTPUT);
-    // __disable_irq();
+
     return 1;
 }
 
