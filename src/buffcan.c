@@ -3,38 +3,66 @@
 void buffcan_init(BuffCAN_t* pCan) {
 	Serial.printf("CAN INIT\n");
 
-	Serial.printf("MCR: %0.8x\n", *(vptr_t)FLEXCANx_MCR(pCan->bus));
-
-	// enable the main module clocks to allow writing to registers
+	/// enable the main module clocks to allow writing to registers
 	buffcan_enable_register_clock(pCan);
 	buffcan_enable_module_clock(pCan);
 
-	// enable the rx and tx pins
+	/// enable the rx and tx pins
 	buffcan_enable_rx(pCan);
 	buffcan_enable_tx(pCan, false);
 
-	// enable the module (this does nothing if Teensy was just powered on)
+	/// enable the module (this does nothing if Teensy was just powered on)
 	buffcan_mode_exit_disable(pCan);
 
-	// enter into freeze mode (this does nothing if Teensy was just powered on)
+	/// enter into freeze mode (this does nothing if Teensy was just powered on)
 	buffcan_mode_enter_freeze(pCan);
 
-	// configure the MCR register
+	/// configure the MCR register
+	// enable the RX FIFO
+	buffcan_enable_fifo(pCan);
+	// allow Wake Up interrupt generation and Self Wake Up
+	buffcan_enable_self_wake(pCan);
+	// enable TX/RX warning interrupts
+	buffcan_enable_warning_int(pCan);
+	// enable individual mailbox masking
+	buffcan_enable_mailbox_masking(pCan);
+	// enable local priority to Message Buffers
+	buffcan_enable_local_priority(pCan);
+	// set the fifo filter format
+	buffcan_fifo_set_filter_format(pCan, B);
+	// set the max message buffer count
+	buffcan_set_mb_count(pCan, 55);
+
+	/// configure the CTRL1/2 registers
 
 
-	// configure the CTRL1/2 registers
+	/// configure the Message Buffers
 
 
-	// configure the Message Buffers
+	/// configure the RXIMR registers
 
 
-	// configure the RXIMR registers
-
-
-	// exit freeze mode
+	/// exit freeze mode
+	buffcan_mode_exit_freeze(pCan);
 
 	buffcan_print_MCR(pCan);
+	Serial.printf("CAN INIT FINISHED\n");
 }
+
+void buffcan_reset(BuffCAN_t* pCan) {
+	// assert the MCR[SOFT_RST] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_SOFT_RST;
+
+	// block until FlexCAN negates this bit
+	while (*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_SOFT_RST);
+
+	// re-initialize CAN
+	buffcan_init(pCan);
+}
+
+////////////////////////////////////////
+// FlexCAN Configuration Functions    //
+////////////////////////////////////////
 
 void buffcan_enable_register_clock(BuffCAN_t* pCan) {
 	// assert can1_serial_clk_enable and can1_clk_enable
@@ -85,7 +113,7 @@ void buffcan_enable_rx(BuffCAN_t* pCan) {
 	}
 }
 
-void buffcan_enable_tx(BuffCAN_t* pCan, int alt_tx) {
+void buffcan_enable_tx(BuffCAN_t* pCan, uint8_t alt_tx) {
 	if (pCan->bus == CAN1) {
 		// from the Teensy electrical wiring schematic, Teensy pin 22 for CRX1 is wired to GPIO_AD_B1_O8
 		if (alt_tx) {
@@ -116,10 +144,6 @@ void buffcan_enable_tx(BuffCAN_t* pCan, int alt_tx) {
 	}
 }
 
-void buffcan_enable_fifo(BuffCAN_t* pCan) {
-	// assert the MCR[RFEN] bit
-	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_FREN;
-}
 
 void buffcan_disable_register_clock(BuffCAN_t* pCan) {
 	// negate can1_serial_clk_enable and can1_clk_enable
@@ -171,7 +195,7 @@ void buffcan_disable_rx(BuffCAN_t* pCan) {
 	}
 }
 
-void buffcan_disable_tx(BuffCAN_t* pCan, int alt_tx) {
+void buffcan_disable_tx(BuffCAN_t* pCan, uint8_t alt_tx) {
 	// reset the respective GPIO settings to their defaults
 	if (pCan->bus == CAN1) {
 		// from the Teensy electrical wiring schematic, Teensy pin 22 for CRX1 is wired to GPIO_AD_B1_O8
@@ -203,10 +227,118 @@ void buffcan_disable_tx(BuffCAN_t* pCan, int alt_tx) {
 	}
 }
 
+////////////////////////////////////////
+// Feature Functions                  //
+////////////////////////////////////////
+
+void buffcan_enable_fifo(BuffCAN_t* pCan) {
+	// assert the MCR[RFEN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_FREN;
+}
+
+void buffcan_enable_self_wake(BuffCAN_t* pCan) {
+	// assert the MCR[WAK_MSK] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_WAK_MSK;
+
+	// assert the MCR[SLF_WAK] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_SLF_WAK;
+
+	// assert the MCR[WAK_SRC] bit
+	// this enables the low pass filter to prevent noise from waking FlexCAN
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_WAK_SRC;
+}
+
+void buffcan_enable_warning_int(BuffCAN_t* pCan) {
+	// assert the MCR[WRN_EN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_WRN_EN;
+}
+
+void buffcan_enable_self_reception(BuffCAN_t* pCan) {
+	// negate the MCR[SRX_DIS] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_SRX_DIS;
+}
+
+void buffcan_enable_mailbox_masking(BuffCAN_t* pCan) {
+	// assert the MCR[IRMQ] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_IRMQ;
+}
+
+void buffcan_enable_local_priority(BuffCAN_t* pCan) {
+	// assert the MCR[LPRIO_EN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_LPRIO_EN;
+}
+
+void buffcan_enable_tx_abort(BuffCAN_t* pCan) {
+	// assert the MCR[AEN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_AEN;
+}
+
+
 void buffcan_disable_fifo(BuffCAN_t* pCan) {
 	// negate the MCR[RFEN] bit
 	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_FREN;
 }
+
+void buffcan_disable_self_wake(BuffCAN_t* pCan) {
+	// negate the MCR[WAK_MSK] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_WAK_MSK;
+
+	// negate the MCR[SLF_WAK] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_SLF_WAK;
+
+	// negate the MCR[WAK_SRC] bit
+	// this disables the low pass filter to prevent noise from waking FlexCAN
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_WAK_SRC;
+
+}
+
+void buffcan_disable_warning_int(BuffCAN_t* pCan) {
+	// negate the MCR[WRN_EN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_WRN_EN;
+}
+
+void buffcan_disable_self_reception(BuffCAN_t* pCan) {
+	// assert the MCR[SRX_DIS] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_SRX_DIS;
+}
+
+void buffcan_disable_mailbox_masking(BuffCAN_t* pCan) {
+	// negate the MCR[IRMQ] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_IRMQ;
+}
+
+void buffcan_disable_local_priority(BuffCAN_t* pCan) {
+	// negate the MCR[LPRIO_EN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_LPRIO_EN;
+}
+
+void buffcan_disable_tx_abort(BuffCAN_t* pCan) {
+	// negate the MCR[AEN] bit
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_AEN;
+}
+
+////////////////////////////////////////
+// FlexCAN Parameter Functions        //
+////////////////////////////////////////
+
+void buffcan_set_mb_count(BuffCAN_t* pCan, uint8_t mb_count) {
+	// verify the mb_count is valid
+	if (mb_count > 64) return;
+
+	// set mb_count to the MCR[MAXMB] field
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) = (*(vptr_t)FLEXCANx_MCR(pCan->bus) & ~FLEXCANx_MCR_MAXMB) | (mb_count & FLEXCANx_MCR_MAXMB);
+}
+
+////////////////////////////////////////
+// FIFO Functions                     //
+////////////////////////////////////////
+
+void buffcan_fifo_set_filter_format(BuffCAN_t* pCan, FIFOFilterFormat format) {
+	// set the MCR[IDAM] field respective to what format is used
+	*(vptr_t)FLEXCANx_MCR(pCan->bus) = (*(vptr_t)FLEXCANx_MCR(pCan->bus) & ~FLEXCANx_MCR_IDAM) | ((format << 8) & FLEXCANx_MCR_IDAM);
+}
+
+
 
 ////////////////////////////////////////
 // Mode Switch Functions              //
@@ -318,7 +450,7 @@ void buffcan_print_MCR(BuffCAN_t* pCan) {
 	uint32_t mcr = *(vptr_t)FLEXCANx_MCR(pCan->bus);
 	Serial.printf(
 		"MCR: %0.8x\n"
-		"MDIS: %b\tFRZ: %b\tRFEN: %b\tHALT: %b\nNOT_RDY: %b\tWAK_MSK: %b\tSOFT_RST: %b\tFRZ_ACK: %b\nSUPV: %b\tSLF_WAK: %b\tWRN_EN: %b\tLPM_ACK: %b\nWAK_SRC: %b\tSRX_DIS: %b\tIRMQ: %b\tLPRIO_EN: %b\nAEN: %b\tIDAM: %b\tMAXMB: %b\n",
+		"MDIS: %b\tFRZ: %b\tRFEN: %b\tHALT: %b\nNOT_RDY: %b\tWAK_MSK: %b\tSOFT_RST: %b\tFRZ_ACK: %b\nSUPV: %b\tSLF_WAK: %b\tWRN_EN: %b\tLPM_ACK: %b\nWAK_SRC: %b\tSRX_DIS: %b\tIRMQ: %b\tLPRIO_EN: %b\nAEN: %b\tIDAM: %0.2b\tMAXMB: %0.7b\n",
 		mcr,
 		!!(mcr & FLEXCANx_MCR_MDIS),
 		!!(mcr & FLEXCANx_MCR_FRZ),

@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-void diagnostic_blink() {
+static void inline diagnostic_blink() {
     if (millis() % 1000 < 500) {
         digitalWriteFast(LED_BUILTIN, HIGH);
     } else {

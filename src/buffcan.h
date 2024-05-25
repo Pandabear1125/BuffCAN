@@ -5,31 +5,76 @@
 #include <Arduino.h>
 
 #include "imxrt1062_registers.h"
+#include "debug.h"
 
 // FlexCAN bus enum. Contains the base address of the bus
-typedef enum CAN_BUS {
+typedef enum CanBus {
     CAN1 = FLEXCAN1_BASE,
     CAN2 = FLEXCAN2_BASE,
     CAN3 = FLEXCAN3_BASE,
-} CAN_BUS;
+} CanBus;
+
+typedef enum FIFOFilterFormat {
+	A = 0b00,
+	B = 0b01,
+	C = 0b10,
+	D = 0b11,
+} FIFOFilterFormat;
 
 typedef struct BuffCAN_t {
-    CAN_BUS bus;
+    CanBus bus;
 } BuffCAN_t;
 
 void buffcan_init(BuffCAN_t* pCan);
+void buffcan_reset(BuffCAN_t* pCan);
+
+////////////////////////////////////////
+// FlexCAN Configuration Functions    //
+////////////////////////////////////////
 
 void buffcan_enable_register_clock(BuffCAN_t* pCan);
 void buffcan_enable_module_clock(BuffCAN_t* pCan);
 void buffcan_enable_rx(BuffCAN_t* pCan);
-void buffcan_enable_tx(BuffCAN_t* pCan, int alt_tx);
-void buffcan_enable_fifo(BuffCAN_t* pCan);
+void buffcan_enable_tx(BuffCAN_t* pCan, uint8_t alt_tx);
 
 void buffcan_disable_register_clock(BuffCAN_t* pCan);
 void buffcan_disable_module_clock(BuffCAN_t* pCan);
 void buffcan_disable_rx(BuffCAN_t* pCan);
-void buffcan_disable_tx(BuffCAN_t* pCan, int alt_tx);
+void buffcan_disable_tx(BuffCAN_t* pCan, uint8_t alt_tx);
+
+////////////////////////////////////////
+// Feature Functions                  //
+////////////////////////////////////////
+
+void buffcan_enable_fifo(BuffCAN_t* pCan);
+void buffcan_enable_self_wake(BuffCAN_t* pCan);
+void buffcan_enable_warning_int(BuffCAN_t* pCan);
+void buffcan_enable_self_reception(BuffCAN_t* pCan);
+void buffcan_enable_mailbox_masking(BuffCAN_t* pCan);
+void buffcan_enable_local_priority(BuffCAN_t* pCan);
+void buffcan_enable_tx_abort(BuffCAN_t* pCan);
+
 void buffcan_disable_fifo(BuffCAN_t* pCan);
+void buffcan_disable_self_wake(BuffCAN_t* pCan);
+void buffcan_disable_warning_int(BuffCAN_t* pCan);
+void buffcan_disable_self_reception(BuffCAN_t* pCan);
+void buffcan_disable_mailbox_masking(BuffCAN_t* pCan);
+void buffcan_disable_local_priority(BuffCAN_t* pCan);
+void buffcan_disable_tx_abort(BuffCAN_t* pCan);
+
+////////////////////////////////////////
+// FlexCAN Parameter Functions        //
+////////////////////////////////////////
+
+void buffcan_set_mb_count(BuffCAN_t* pCan, uint8_t mb_count);
+
+////////////////////////////////////////
+// FIFO Functions                     //
+////////////////////////////////////////
+
+// todo: revisit
+void buffcan_fifo_set_filter_format(BuffCAN_t* pCan, FIFOFilterFormat format);
+
 
 ////////////////////////////////////////
 // Mode Switch Functions              //
