@@ -31,10 +31,22 @@ void buffcan_init(BuffCAN_t* pCan) {
 	// set the fifo filter format
 	buffcan_fifo_set_filter_format(pCan, B);
 	// set the max message buffer count
-	buffcan_set_mb_count(pCan, 55);
+	buffcan_set_mb_count(pCan, 32);
 
 	/// configure the CTRL1/2 registers
-
+	// todo: clock settings
+	// enable bus off interrupts
+	buffcan_enable_bus_off_int(pCan);
+	// enable CAN error interrupts
+	buffcan_enable_error_int(pCan);
+	// set the number of fifo filters to allow
+	buffcan_fifo_set_filter_count(pCan, 0xC);
+	// prefer the FIFO first if enabled
+	buffcan_enable_mailbox_priority_matching(pCan);
+	// enable remote frame storage
+	buffcan_enable_remote_frame_storing(pCan);
+	// enable extended matching
+	buffcan_enable_extended_matching(pCan);
 
 	/// configure the Message Buffers
 
@@ -251,6 +263,12 @@ void buffcan_enable_self_wake(BuffCAN_t* pCan) {
 void buffcan_enable_warning_int(BuffCAN_t* pCan) {
 	// assert the MCR[WRN_EN] bit
 	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_WRN_EN;
+
+	// assert the CTRL1[TWRN_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) |= FLEXCANx_CTRL1_TWRN_MSK;
+
+	// assert the CTRL1[RWRN_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) |= FLEXCANx_CTRL1_RWRN_MSK;
 }
 
 void buffcan_enable_self_reception(BuffCAN_t* pCan) {
@@ -271,6 +289,31 @@ void buffcan_enable_local_priority(BuffCAN_t* pCan) {
 void buffcan_enable_tx_abort(BuffCAN_t* pCan) {
 	// assert the MCR[AEN] bit
 	*(vptr_t)FLEXCANx_MCR(pCan->bus) |= FLEXCANx_MCR_AEN;
+}
+
+void buffcan_enable_bus_off_int(BuffCAN_t* pCan) {
+	// assert the CTRL1[BOFF_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) |= FLEXCANx_CTRL1_BOFF_MSK;
+}
+
+void buffcan_enable_error_int(BuffCAN_t* pCan) {
+	// assert the CTRL1[ERR_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) |= FLEXCANx_CTRL1_ERR_MSK;
+}
+
+void buffcan_enable_mailbox_priority_matching(BuffCAN_t* pCan) {
+	// assert the CTRL2[MRP] bit
+	*(vptr_t)FLEXCANx_CTRL2(pCan->bus) |= FLEXCANx_CTRL2_MRP;
+}
+
+void buffcan_enable_remote_frame_storing(BuffCAN_t* pCan) {
+	// assert the CTRL2[RRS] bit
+	*(vptr_t)FLEXCANx_CTRL2(pCan->bus) |= FLEXCANx_CTRL2_RRS;
+}
+
+void buffcan_enable_extended_matching(BuffCAN_t* pCan) {
+	// assert the CTRL2[EACEN] bit
+	*(vptr_t)FLEXCANx_CTRL2(pCan->bus) |= FLEXCANx_CTRL2_EACEN;
 }
 
 
@@ -295,6 +338,12 @@ void buffcan_disable_self_wake(BuffCAN_t* pCan) {
 void buffcan_disable_warning_int(BuffCAN_t* pCan) {
 	// negate the MCR[WRN_EN] bit
 	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_WRN_EN;
+
+	// negate the CTRL1[TWRN_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) &= ~FLEXCANx_CTRL1_TWRN_MSK;
+
+	// negate the CTRL1[RWRN_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) &= ~FLEXCANx_CTRL1_RWRN_MSK;
 }
 
 void buffcan_disable_self_reception(BuffCAN_t* pCan) {
@@ -315,6 +364,31 @@ void buffcan_disable_local_priority(BuffCAN_t* pCan) {
 void buffcan_disable_tx_abort(BuffCAN_t* pCan) {
 	// negate the MCR[AEN] bit
 	*(vptr_t)FLEXCANx_MCR(pCan->bus) &= ~FLEXCANx_MCR_AEN;
+}
+
+void buffcan_disable_bus_off_int(BuffCAN_t* pCan) {
+	// negate the CTRL1[BOFF_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) &= ~FLEXCANx_CTRL1_BOFF_MSK;
+}
+
+void buffcan_disable_error_int(BuffCAN_t* pCan) {
+	// negate the CTRL1[ERR_MSK] bit
+	*(vptr_t)FLEXCANx_CTRL1(pCan->bus) &= ~FLEXCANx_CTRL1_ERR_MSK;
+}
+
+void buffcan_disable_mailbox_priority_matching(BuffCAN_t* pCan) {
+	// negate the CTRL2[MRP] bit
+	*(vptr_t)FLEXCANx_CTRL2(pCan->bus) &= ~FLEXCANx_CTRL2_MRP;
+}
+
+void buffcan_disable_remote_frame_storing(BuffCAN_t* pCan) {
+	// negate the CTRL2[RRS] bit
+	*(vptr_t)FLEXCANx_CTRL2(pCan->bus) &= ~FLEXCANx_CTRL2_RRS;
+}
+
+void buffcan_disable_extended_matching(BuffCAN_t* pCan) {
+	// negate the CTRL2[EACEN] bit
+	*(vptr_t)FLEXCANx_CTRL2(pCan->bus) &= ~FLEXCANx_CTRL2_EACEN;
 }
 
 ////////////////////////////////////////
@@ -338,7 +412,14 @@ void buffcan_fifo_set_filter_format(BuffCAN_t* pCan, FIFOFilterFormat format) {
 	*(vptr_t)FLEXCANx_MCR(pCan->bus) = (*(vptr_t)FLEXCANx_MCR(pCan->bus) & ~FLEXCANx_MCR_IDAM) | ((format << 8) & FLEXCANx_MCR_IDAM);
 }
 
+void buffcan_fifo_set_filter_count(BuffCAN_t* pCan, uint8_t filter_count) {
+	// verify filter_count is valid
+	uint8_t max_filters = ((*(vptr_t)FLEXCANx_MCR(pCan->bus) & FLEXCANx_MCR_MAXMB) - 6) * 4;
+	if ((filter_count + 1) * 8 > max_filters) return;
 
+	// set the CTRL2[RFFN] field
+	*(vptr_t)FLEXCANx_CTRL2(pCan->bus) = (*(vptr_t)FLEXCANx_CTRL2(pCan->bus) & ~FLEXCANx_CTRL2_RFFN) | ((filter_count << 24) & FLEXCANx_CTRL2_RFFN);
+}
 
 ////////////////////////////////////////
 // Mode Switch Functions              //

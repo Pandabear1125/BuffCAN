@@ -53,6 +53,11 @@ void buffcan_enable_self_reception(BuffCAN_t* pCan);
 void buffcan_enable_mailbox_masking(BuffCAN_t* pCan);
 void buffcan_enable_local_priority(BuffCAN_t* pCan);
 void buffcan_enable_tx_abort(BuffCAN_t* pCan);
+void buffcan_enable_bus_off_int(BuffCAN_t* pCan);
+void buffcan_enable_error_int(BuffCAN_t* pCan);
+void buffcan_enable_mailbox_priority_matching(BuffCAN_t* pCan);
+void buffcan_enable_remote_frame_storing(BuffCAN_t* pCan);
+void buffcan_enable_extended_matching(BuffCAN_t* pCan);
 
 void buffcan_disable_fifo(BuffCAN_t* pCan);
 void buffcan_disable_self_wake(BuffCAN_t* pCan);
@@ -61,6 +66,11 @@ void buffcan_disable_self_reception(BuffCAN_t* pCan);
 void buffcan_disable_mailbox_masking(BuffCAN_t* pCan);
 void buffcan_disable_local_priority(BuffCAN_t* pCan);
 void buffcan_disable_tx_abort(BuffCAN_t* pCan);
+void buffcan_disable_bus_off_int(BuffCAN_t* pCan);
+void buffcan_disable_error_int(BuffCAN_t* pCan);
+void buffcan_disable_mailbox_priority_matching(BuffCAN_t* pCan);
+void buffcan_disable_remote_frame_storing(BuffCAN_t* pCan);
+void buffcan_disable_extended_matching(BuffCAN_t* pCan);
 
 ////////////////////////////////////////
 // FlexCAN Parameter Functions        //
@@ -74,7 +84,7 @@ void buffcan_set_mb_count(BuffCAN_t* pCan, uint8_t mb_count);
 
 // todo: revisit
 void buffcan_fifo_set_filter_format(BuffCAN_t* pCan, FIFOFilterFormat format);
-
+void buffcan_fifo_set_filter_count(BuffCAN_t* pCan, uint8_t filter_count);
 
 ////////////////////////////////////////
 // Mode Switch Functions              //
